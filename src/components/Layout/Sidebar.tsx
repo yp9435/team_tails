@@ -1,24 +1,10 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { Employee } from '../../types/employee';
 import { EmployeeTile } from '../Sidebar/EmployeeTile';
 import { SearchFilter } from '../Sidebar/SearchFilter';
 import { TeamFilter } from '../Sidebar/TeamFilter';
 import { useSearch } from '../../hooks/useSearch';
-
-type DnDType = Employee | null;
-
-const DnDContext = createContext<[DnDType, React.Dispatch<React.SetStateAction<DnDType>>] | undefined>(undefined);
-
-export const DnDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const state = useState<DnDType>(null);
-  return <DnDContext.Provider value={state}>{children}</DnDContext.Provider>;
-};
-
-export const useDnD = () => {
-  const context = useContext(DnDContext);
-  if (!context) throw new Error('useDnD must be used within a DnDProvider');
-  return context;
-};
+import { DnDProvider, useDnD } from '../Sidebar/DnDContext';
 
 interface SidebarProps {
   employees: Employee[];

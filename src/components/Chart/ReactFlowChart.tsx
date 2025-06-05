@@ -18,6 +18,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { Employee } from '../../types/employee';
 import { EmployeeNode } from './EmployeeNode';
+import type { NodeProps } from '@xyflow/react';
 import { buildHierarchy, getDirectReports, isValidManagerAssignment } from '../../utils/hierarchy';
 
 interface ReactFlowChartProps {
@@ -26,10 +27,10 @@ interface ReactFlowChartProps {
   onUpdateEmployee: (id: string, updates: Partial<Employee>) => Promise<Employee>;
   onError: (message: string) => void;
 }
-
-const nodeTypes: NodeTypes = {
+const nodeTypes = {
   employee: EmployeeNode,
 };
+
 
 let nodeId = 0;
 const getNodeId = () => `node_${nodeId++}`;
@@ -253,6 +254,9 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
       },
     }));
   }, [nodes, highlightedTeam]);
+
+  // Log nodes before rendering
+  console.log(nodes);
 
   return (
     <div 

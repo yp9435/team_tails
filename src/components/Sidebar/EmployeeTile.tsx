@@ -5,8 +5,9 @@ import { highlightText } from '../../utils/hierarchy';
 interface EmployeeTileProps {
   employee: Employee;
   searchQuery?: string;
-  onDragStart: (employee: Employee) => void;
-  onDragEnd: () => void;
+  onDragStart?: (employee: Employee) => void;
+  onDragEnd?: () => void;
+  variant?: 'sidebar' | 'node';
 }
 
 const teamColors: Record<string, string> = {
@@ -22,17 +23,16 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
   searchQuery = '',
   onDragStart,
   onDragEnd,
+  variant = 'sidebar',
 }) => {
-  // Call the parent's onDragStart with the employee object
+  // Always draggable
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('application/json', JSON.stringify(employee));
     e.dataTransfer.effectAllowed = 'move';
-    onDragStart(employee);
+    if (onDragStart) onDragStart(employee);
   };
-
-  // Call the parent's onDragEnd
   const handleDragEnd = () => {
-    onDragEnd();
+    if (onDragEnd) onDragEnd();
   };
 
   const teamColor = teamColors[employee.team] || 'bg-gray-100 text-gray-800 border-gray-200';
@@ -42,8 +42,13 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      className="bg-white rounded-lg border border-gray-200 p-4 cursor-move hover:shadow-lg hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-1"
+      className={`bg-white rounded-lg border border-gray-200 p-4 ${
+        variant === 'sidebar'
+          ? 'cursor-move hover:shadow-lg hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-1'
+          : ''
+      }`}
       data-testid={`employee-tile-${employee.id}`}
+      style={variant === 'node' ? { boxShadow: '0 2px 8px rgba(0,0,0,0.08)' } : {}}
     >
       <div className="flex items-start space-x-3">
         <img
@@ -52,19 +57,16 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
           className="w-12 h-12 rounded-full border-2 border-gray-200"
         />
         <div className="flex-1 min-w-0">
-          <h3 
+          <h3
             className="text-sm font-semibold text-gray-900 truncate"
-            dangerouslySetInnerHTML={{ 
-              __html: highlightText(employee.name, searchQuery) 
+            dangerouslySetInnerHTML={{
+              __html: highlightText(employee.name, searchQuery),
             }}
           />
-          <p 
-            className="text-sm text-gray-600 truncate"
-            dangerouslySetInnerHTML={{ 
-              __html: highlightText(employee.designation, searchQuery) 
-            }}
-          />
-          <span 
+          <p className="text-sm text-gray-600 truncate">
+            {employee.designation}
+          </p>
+          <span
             className={`inline-block px-2 py-1 text-xs font-medium rounded-full border mt-2 ${teamColor}`}
           >
             {employee.team}
