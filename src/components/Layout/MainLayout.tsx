@@ -1,7 +1,6 @@
 import React, { useRef, useCallback, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { useEmployees } from '../../hooks/useEmployees';
-import { toast } from 'sonner';
 import type { Employee } from '../../types/employee';
 import { DnDProvider, useDnD } from '../Sidebar/DnDContext';
 import {
@@ -21,7 +20,7 @@ import '@xyflow/react/dist/style.css';
 import { EmployeeNode } from '../Chart/EmployeeNode';
 import Navbar from '../Navbar/Navbar';
 
-const initialNodes: Node<Employee>[] = [
+const initialNodes: Node[] = [
   {
     id: '1',
     type: 'employee',
@@ -46,8 +45,8 @@ const nodeTypes = {
 
 const FlowChartArea: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<Employee>(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<Employee>>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD(); // type is possibly Employee | string | null
 
@@ -76,7 +75,7 @@ const FlowChartArea: React.FC = () => {
 
       const nodeId = getId();
 
-      const newNode: Node<Employee> = {
+      const newNode: Node = {
         id: nodeId,
         type: 'employee',
         position,
@@ -124,21 +123,9 @@ const FlowChartArea: React.FC = () => {
 
 export const MainLayout: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState('all');
-  const { employees, loading, error, updateEmployee } = useEmployees();
+  const { employees, loading, error } = useEmployees();
 
-  const handleSuccess = (message: string) => toast.success(message);
-  const handleError = (message: string) => toast.error(message);
 
-  const handleUpdateEmployee = async (id: string, updates: Partial<Employee>) => {
-    try {
-      await updateEmployee(id, updates);
-      handleSuccess('Employee updated successfully');
-      return employees.find((emp) => emp.id === id)!;
-    } catch (err) {
-      handleError('Failed to update employee');
-      throw err;
-    }
-  };
 
   if (loading) {
     return (

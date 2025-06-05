@@ -2,7 +2,6 @@
 import type { Employee } from '../types/employee';
 
 export function buildHierarchy(employees: Employee[]): Employee[] {
-  const employeeMap = new Map(employees.map(emp => [emp.id, emp]));
   const roots: Employee[] = [];
   
   employees.forEach(employee => {

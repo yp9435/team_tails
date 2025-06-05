@@ -9,7 +9,6 @@ import {
   useNodesState,
   useEdgesState,
   type Connection,
-  type NodeTypes,
   MarkerType,
   ConnectionMode,
   useReactFlow,
@@ -18,8 +17,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { Employee } from '../../types/employee';
 import { EmployeeNode } from './EmployeeNode';
-import type { NodeProps } from '@xyflow/react';
-import { buildHierarchy, getDirectReports, isValidManagerAssignment } from '../../utils/hierarchy';
+import { getDirectReports, isValidManagerAssignment } from '../../utils/hierarchy';
 
 interface ReactFlowChartProps {
   employees: Employee[];
@@ -32,8 +30,6 @@ const nodeTypes = {
 };
 
 
-let nodeId = 0;
-const getNodeId = () => `node_${nodeId++}`;
 
 // Layout algorithm
 const getLayoutedElements = (employees: Employee[]) => {
@@ -92,7 +88,7 @@ const getLayoutedElements = (employees: Employee[]) => {
   buildLevels(rootEmployees);
   
   // Center nodes in each level
-  hierarchyMap.forEach((levelEmployees, level) => {
+  hierarchyMap.forEach((levelEmployees, _) => {
     const totalWidth = (levelEmployees.length - 1) * 300;
     const startX = -totalWidth / 2;
     
@@ -238,7 +234,7 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
     [nodes, setNodes, onError, screenToFlowPosition]
   );
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node<Employee>) => {
+  const onNodeClick = useCallback((_: unknown, node: Node<Employee>) => {
     const team = node.data.team;
     setHighlightedTeam(prev => prev === team ? null : team);
   }, []);

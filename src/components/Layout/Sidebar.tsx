@@ -4,7 +4,7 @@ import { EmployeeTile } from '../Sidebar/EmployeeTile';
 import { SearchFilter } from '../Sidebar/SearchFilter';
 import { TeamFilter } from '../Sidebar/TeamFilter';
 import { useSearch } from '../../hooks/useSearch';
-import { DnDProvider, useDnD } from '../Sidebar/DnDContext';
+import { useDnD } from '../Sidebar/DnDContext';
 
 interface SidebarProps {
   employees: Employee[];

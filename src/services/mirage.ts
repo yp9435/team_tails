@@ -1,13 +1,6 @@
 import { createServer, Model, Factory } from 'miragejs';
 
 const teams = ['Engineering', 'Design', 'Product', 'Marketing', 'Leadership'];
-const teamColors = {
-  Engineering: 'bg-blue-100 text-blue-800',
-  Design: 'bg-purple-100 text-purple-800',
-  Product: 'bg-green-100 text-green-800',
-  Marketing: 'bg-pink-100 text-pink-800',
-  Leadership: 'bg-yellow-100 text-yellow-800'
-};
 
 export function makeServer({ environment = 'development' } = {}) {
   return createServer({

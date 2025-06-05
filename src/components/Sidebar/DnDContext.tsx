@@ -1,13 +1,9 @@
 import { createContext, useContext, useState } from 'react';
  
-interface DnDContextType {
-    type: string | null;
-    setType: (type: string | null) => void;
-}
 
 type DnDContextValue = [string | null, (type: string | null) => void];
 
-const DnDContext = createContext<DnDContextValue>([null, (_: string | null) => {}]);
+const DnDContext = createContext<DnDContextValue>([null, () => {}]);
  
 import type { ReactNode } from 'react';
 
