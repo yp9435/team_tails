@@ -1,0 +1,90 @@
+[
+  {
+    "id": "1",
+    "name": "Shalin Jain",
+    "designation": "CEO",
+    "team": "Leadership",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
+    "managerId": null
+  },
+  {
+    "id": "2",
+    "name": "Pradeek J",
+    "designation": "CTO",
+    "team": "Leadership",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
+    "managerId": "1"
+  },
+  {
+    "id": "3",
+    "name": "person1",
+    "designation": "engineer",
+    "team": "Engineering",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
+    "managerId": "2"
+  },
+  {
+    "id": "4",
+    "name": "person2",
+    "designation": "engineer",
+    "team": "Engineering",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
+    "managerId": "2"
+  },
+  {
+    "id": "5",
+    "name": "someone",
+    "designation": "engineer",
+    "team": "Engineering",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=5",
+    "managerId": "2"
+  },
+  {
+    "id": "6",
+    "name": "noone",
+    "designation": "designer",
+    "team": "Design",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=6",
+    "managerId": "2"
+  },
+  {
+    "id": "7",
+    "name": "thing1",
+    "designation": "designer",
+    "team": "Design",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=7",
+    "managerId": "2"
+  },
+  {
+    "id": "8",
+    "name": "thing2",
+    "designation": "manager",
+    "team": "Product",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=8",
+    "managerId": "1"
+  },
+  {
+    "id": "9",
+    "name": "object",
+    "designation": "manager",
+    "team": "Product",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=9",
+    "managerId": "8"
+  },
+  {
+    "id": "10",
+    "name": "person3",
+    "designation": "marketer",
+    "team": "Marketing",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=10",
+    "managerId": "1"
+  },
+  {
+    "id": "11",
+    "name": "notwo",
+    "designation": "marketer",
+    "team": "Marketing",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=11",
+    "managerId": "10"
+  }
+]

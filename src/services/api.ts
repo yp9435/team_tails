@@ -4,9 +4,17 @@ const API_BASE = '/api';
 
 export const employeeApi = {
   async getAll(): Promise<Employee[]> {
-    const response = await fetch(`${API_BASE}/employees`);
-    const data = await response.json();
-    return data.employees || data;
+    if (process.env.NODE_ENV === 'development') {
+      // Use MirageJS API in development
+      const response = await fetch(`/api/employees`);
+      const data = await response.json();
+      return data.employees || data;
+    } else {
+      // Use static JSON in production
+      const response = await fetch('/employees.json');
+      if (!response.ok) throw new Error('Failed to fetch employees (prod)');
+      return response.json();
+    }
   },
 
   async update(id: string, updates: Partial<Employee>): Promise<Employee> {
