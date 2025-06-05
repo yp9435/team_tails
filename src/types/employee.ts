@@ -1,11 +1,12 @@
-export interface Employee {
+export interface Employee extends Record<string, unknown> {
   id: string;
   name: string;
   designation: string;
   team: string;
-  managerId: string | null;
   avatar?: string;
+  managerId?: string | null;
 }
+
 
 export interface TeamInfo {
   name: string;
