@@ -23,10 +23,16 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
   onDragStart,
   onDragEnd,
 }) => {
+  // Call the parent's onDragStart with the employee object
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('application/json', JSON.stringify(employee));
     e.dataTransfer.effectAllowed = 'move';
     onDragStart(employee);
+  };
+
+  // Call the parent's onDragEnd
+  const handleDragEnd = () => {
+    onDragEnd();
   };
 
   const teamColor = teamColors[employee.team] || 'bg-gray-100 text-gray-800 border-gray-200';
@@ -35,7 +41,7 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
     <div
       draggable
       onDragStart={handleDragStart}
-      onDragEnd={onDragEnd}
+      onDragEnd={handleDragEnd}
       className="bg-white rounded-lg border border-gray-200 p-4 cursor-move hover:shadow-lg hover:border-gray-300 transition-all duration-200 transform hover:-translate-y-1"
       data-testid={`employee-tile-${employee.id}`}
     >

@@ -1,9 +1,24 @@
-import React, { useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import type { Employee } from '../../types/employee';
 import { EmployeeTile } from '../Sidebar/EmployeeTile';
 import { SearchFilter } from '../Sidebar/SearchFilter';
 import { TeamFilter } from '../Sidebar/TeamFilter';
 import { useSearch } from '../../hooks/useSearch';
+
+type DnDType = Employee | null;
+
+const DnDContext = createContext<[DnDType, React.Dispatch<React.SetStateAction<DnDType>>] | undefined>(undefined);
+
+export const DnDProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const state = useState<DnDType>(null);
+  return <DnDContext.Provider value={state}>{children}</DnDContext.Provider>;
+};
+
+export const useDnD = () => {
+  const context = useContext(DnDContext);
+  if (!context) throw new Error('useDnD must be used within a DnDProvider');
+  return context;
+};
 
 interface SidebarProps {
   employees: Employee[];
@@ -16,8 +31,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTeamFilterChange,
   selectedTeam,
 }) => {
-  const [draggedEmployee, setDraggedEmployee] = useState<Employee | null>(null);
-  
+  const [_, setDnDType] = useDnD();
+
   // Filter by team first
   const teamFilteredEmployees = useMemo(() => {
     if (selectedTeam === 'all') return employees;
@@ -32,12 +47,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     hasResults,
   } = useSearch(teamFilteredEmployees);
 
+  // Use DnD context for drag events
   const handleDragStart = (employee: Employee) => {
-    setDraggedEmployee(employee);
+    setDnDType(employee);
   };
 
   const handleDragEnd = () => {
-    setDraggedEmployee(null);
+    setDnDType(null);
   };
 
   return (
@@ -88,17 +104,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
       </div>
-
-      {draggedEmployee && (
-        <div className="p-4 bg-blue-50 border-t border-blue-200">
-          <p className="text-sm text-blue-800">
-            Dragging: <span className="font-semibold">{draggedEmployee.name}</span>
-          </p>
-          <p className="text-xs text-blue-600">
-            Drop on the organization chart to add or reassign
-          </p>
-        </div>
-      )}
     </div>
   );
 };
