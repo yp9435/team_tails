@@ -2,7 +2,7 @@
 # Team Tails
 
 **Created by:** yp9435
-**Live Site:** \[https://team-tails.vercel.app/]
+**Live Site:** [https://team-tails.vercel.app/](https://team-tails.vercel.app/)
 
 ## About
 
