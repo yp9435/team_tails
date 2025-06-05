@@ -1,15 +1,20 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import {
   ReactFlow,
+  type Node,
+  type Edge,
   Controls,
   MiniMap,
   Background,
   useNodesState,
   useEdgesState,
+  type Connection,
+  type NodeTypes,
   MarkerType,
   ConnectionMode,
+  useReactFlow,
+  addEdge,
 } from '@xyflow/react';
-import type { Edge, Connection, NodeTypes, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { Employee } from '../../types/employee';
 import { EmployeeNode } from './EmployeeNode';
@@ -25,6 +30,9 @@ interface ReactFlowChartProps {
 const nodeTypes: NodeTypes = {
   employee: EmployeeNode,
 };
+
+let nodeId = 0;
+const getNodeId = () => `node_${nodeId++}`;
 
 // Layout algorithm
 const getLayoutedElements = (employees: Employee[]) => {
@@ -104,7 +112,9 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
   onUpdateEmployee,
   onError,
 }) => {
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [highlightedTeam, setHighlightedTeam] = useState<string | null>(null);
+  const { screenToFlowPosition } = useReactFlow();
 
   // Filter employees based on team filter
   const filteredEmployees = useMemo(() => {
@@ -173,27 +183,30 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
         }
         
         await onUpdateEmployee(connection.target, { managerId: connection.source });
+        setEdges((eds) => addEdge(connection, eds));
       } catch (error) {
         onError(error instanceof Error ? error.message : 'Failed to update reporting relationship');
       }
     },
-    [employees, onUpdateEmployee, onError]
+    [employees, onUpdateEmployee, onError, setEdges]
   );
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {
       event.preventDefault();
       
-      const reactFlowBounds = (event.target as Element).closest('.react-flow')?.getBoundingClientRect();
-      if (!reactFlowBounds) return;
-      
       try {
         const employeeData = JSON.parse(event.dataTransfer.getData('application/json'));
         
-        const position = {
-          x: event.clientX - reactFlowBounds.left - 100,
-          y: event.clientY - reactFlowBounds.top - 50,
-        };
+        if (!employeeData || !employeeData.id) {
+          onError('Invalid employee data');
+          return;
+        }
         
         // Check if employee is already in the chart
         const existingNode = nodes.find(node => node.id === employeeData.id);
@@ -201,6 +214,11 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
           onError('Employee is already in the organization chart');
           return;
         }
+        
+        const position = screenToFlowPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
         
         const newNode: Node<Employee> = {
           id: employeeData.id,
@@ -212,16 +230,12 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
         
         setNodes(nds => [...nds, newNode]);
       } catch (error) {
+        console.error('Drop error:', error);
         onError('Failed to add employee to chart');
       }
     },
-    [nodes, setNodes, onError]
+    [nodes, setNodes, onError, screenToFlowPosition]
   );
-
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node<Employee>) => {
     const team = node.data.team;
@@ -243,8 +257,7 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
   return (
     <div 
       className="h-full w-full bg-gray-50"
-      onDrop={onDrop}
-      onDragOver={onDragOver}
+      ref={reactFlowWrapper}
       data-testid="organization-chart"
     >
       <ReactFlow
@@ -254,6 +267,8 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
@@ -263,7 +278,7 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
         <Controls />
         <MiniMap 
           nodeStrokeWidth={3}
-          nodeColor={(node: Node<Employee>) => {
+          nodeColor={(node) => {
             const teamColors: Record<string, string> = {
               Engineering: '#3b82f6',
               Design: '#8b5cf6',
@@ -271,7 +286,7 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
               Marketing: '#ec4899',
               Leadership: '#f59e0b',
             };
-            return teamColors[node.data?.team as string] || '#6b7280';
+            return teamColors[(node.data as Employee)?.team] || '#6b7280';
           }}
         />
       </ReactFlow>

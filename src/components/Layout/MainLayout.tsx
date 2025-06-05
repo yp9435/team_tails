@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { ReactFlowChart } from '../Chart/ReactFlowChart';
+import { ReactFlowProvider } from '@xyflow/react';
 import { useEmployees } from '../../hooks/useEmployees';
 import { toast } from 'sonner';
 import type { Employee } from '../../types/employee';
@@ -55,25 +56,27 @@ export const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex bg-gray-100">
-      {/* Sidebar - 30% width */}
-      <div className="w-[30%] min-w-[400px] max-w-[500px]">
-        <Sidebar
-          employees={employees}
-          selectedTeam={selectedTeam}
-          onTeamFilterChange={setSelectedTeam}
-        />
-      </div>
+    <ReactFlowProvider>
+      <div className="h-screen flex bg-gray-100">
+        {/* Sidebar - 30% width */}
+        <div className="w-[30%] min-w-[400px] max-w-[500px]">
+          <Sidebar
+            employees={employees}
+            selectedTeam={selectedTeam}
+            onTeamFilterChange={setSelectedTeam}
+          />
+        </div>
 
-      {/* Main Chart Area - 70% width */}
-      <div className="flex-1">
-        <ReactFlowChart
-          employees={employees}
-          filteredTeam={selectedTeam}
-          onUpdateEmployee={handleUpdateEmployee}
-          onError={handleError}
-        />
+        {/* Main Chart Area - 70% width */}
+        <div className="flex-1">
+          <ReactFlowChart
+            employees={employees}
+            filteredTeam={selectedTeam}
+            onUpdateEmployee={handleUpdateEmployee}
+            onError={handleError}
+          />
+        </div>
       </div>
-    </div>
+    </ReactFlowProvider>
   );
 };
