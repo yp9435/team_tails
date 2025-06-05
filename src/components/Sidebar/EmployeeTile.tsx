@@ -25,7 +25,6 @@ export const EmployeeTile: React.FC<EmployeeTileProps> = ({
   onDragEnd,
   variant = 'sidebar',
 }) => {
-  // Always draggable
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('application/json', JSON.stringify(employee));
     e.dataTransfer.effectAllowed = 'move';

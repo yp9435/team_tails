@@ -31,29 +31,23 @@ const nodeTypes = {
 
 
 
-// Layout algorithm
 const getLayoutedElements = (employees: Employee[]) => {
   const nodes: Node<Employee>[] = [];
   const edges: Edge[] = [];
   
-  // Create a hierarchy map
   const hierarchyMap = new Map<string, Employee[]>();
   const rootEmployees = employees.filter(emp => !emp.managerId);
   
-  // Build hierarchy levels
   const buildLevels = (empList: Employee[], level = 0): void => {
     empList.forEach(employee => {
       const directReports = getDirectReports(employees, employee.id);
       
-      // Position calculation
       const levelEmployees = hierarchyMap.get(level.toString()) || [];
       const xPosition = levelEmployees.length * 300;
       const yPosition = level * 200;
       
-      // Add to hierarchy map
       hierarchyMap.set(level.toString(), [...levelEmployees, employee]);
       
-      // Create node
       nodes.push({
         id: employee.id,
         type: 'employee',
@@ -62,7 +56,6 @@ const getLayoutedElements = (employees: Employee[]) => {
         draggable: true,
       });
       
-      // Create edges for manager relationship
       if (employee.managerId) {
         edges.push({
           id: `edge-${employee.managerId}-${employee.id}`,
@@ -78,7 +71,6 @@ const getLayoutedElements = (employees: Employee[]) => {
         });
       }
       
-      // Recursively process direct reports
       if (directReports.length > 0) {
         buildLevels(directReports, level + 1);
       }
@@ -87,7 +79,6 @@ const getLayoutedElements = (employees: Employee[]) => {
   
   buildLevels(rootEmployees);
   
-  // Center nodes in each level
   hierarchyMap.forEach((levelEmployees, _) => {
     const totalWidth = (levelEmployees.length - 1) * 300;
     const startX = -totalWidth / 2;
@@ -113,20 +104,17 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
   const [highlightedTeam, setHighlightedTeam] = useState<string | null>(null);
   const { screenToFlowPosition } = useReactFlow();
 
-  // Filter employees based on team filter
   const filteredEmployees = useMemo(() => {
     if (!filteredTeam || filteredTeam === 'all') {
       return employees;
     }
     
-    // Get all employees in the selected team and their management chain
     const teamEmployees = employees.filter(emp => emp.team === filteredTeam);
     const allRelatedEmployees = new Set<string>();
     
     teamEmployees.forEach(emp => {
       allRelatedEmployees.add(emp.id);
       
-      // Add management chain upward
       let currentManagerId = emp.managerId;
       while (currentManagerId) {
         allRelatedEmployees.add(currentManagerId);
@@ -134,7 +122,6 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
         currentManagerId = manager?.managerId || null;
       }
       
-      // Add all subordinates
       const addSubordinates = (managerId: string) => {
         const subordinates = getDirectReports(employees, managerId);
         subordinates.forEach(sub => {
@@ -156,7 +143,6 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  // Update nodes when employees change
   React.useEffect(() => {
     const { nodes: newNodes, edges: newEdges } = getLayoutedElements(filteredEmployees);
     setNodes(newNodes);
@@ -205,7 +191,6 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
           return;
         }
         
-        // Check if employee is already in the chart
         const existingNode = nodes.find(node => node.id === employeeData.id);
         if (existingNode) {
           onError('Employee is already in the organization chart');
@@ -239,7 +224,6 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
     setHighlightedTeam(prev => prev === team ? null : team);
   }, []);
 
-  // Update node styles based on highlighted team
   const styledNodes = useMemo(() => {
     return nodes.map(node => ({
       ...node,
@@ -251,7 +235,6 @@ export const ReactFlowChart: React.FC<ReactFlowChartProps> = ({
     }));
   }, [nodes, highlightedTeam]);
 
-  // Log nodes before rendering
   console.log(nodes);
 
   return (

@@ -36,7 +36,6 @@ export function isValidManagerAssignment(
 ): boolean {
   if (!newManagerId || newManagerId === employeeId) return true;
   
-  // Check if new manager is a subordinate of the employee
   const subordinates = getAllSubordinates(employees, employeeId);
   return !subordinates.some(sub => sub.id === newManagerId);
 }

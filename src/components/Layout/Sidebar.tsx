@@ -19,7 +19,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [_, setDnDType] = useDnD();
 
-  // Filter by team first
   const teamFilteredEmployees = useMemo(() => {
     if (selectedTeam === 'all') return employees;
     return employees.filter(emp => emp.team === selectedTeam);
@@ -33,7 +32,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     hasResults,
   } = useSearch(teamFilteredEmployees);
 
-  // Use DnD context for drag events
   const handleDragStart = (employee: Employee) => {
     setDnDType(employee);
   };

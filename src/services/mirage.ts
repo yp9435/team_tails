@@ -62,7 +62,6 @@ export function makeServer({ environment = 'development' } = {}) {
         managerId: ceo.id,
       });
 
-      // Simplified team members
       const employees = [
         { id: '3', name: 'person1', designation: 'engineer', team: 'Engineering', managerId: cto.id },
         { id: '4', name: 'person2', designation: 'engineer', team: 'Engineering', managerId: cto.id },
